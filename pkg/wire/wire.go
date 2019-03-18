@@ -1,4 +1,4 @@
-package tftp
+package wire
 
 import (
 	"bytes"
