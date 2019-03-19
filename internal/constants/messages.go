@@ -68,3 +68,9 @@ const FileTransferCompleteMsg string = "Transfer is complete %s\n"
 
 // FileReceivingCompleteMsg template
 const FileReceivingCompleteMsg string = "Finished receiving %s from %v\n"
+
+// TransferTimeoutMsg template
+const TransferTimeoutMsg string = "Transfer %s timed out\n."
+
+// RetryLastPktMsg template
+const RetryLastPktMsg string = "Retrying last packet for %s"

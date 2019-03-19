@@ -17,8 +17,8 @@ import (
  -----------------------------------------------
  |  01  |  Filename  |   0  |    Mode    |   0  |
  -----------------------------------------------
- Mode = octect
- NOTE: Will only handle octect mode
+ Mode = octet
+ NOTE: Will only handle octet mode
 */
 func (s *Server) rrqHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 	// Cast packet
@@ -86,8 +86,8 @@ func (s *Server) rrqHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
  -----------------------------------------------
  |  02 |  Filename  |   0  |    Mode    |   0  |
  -----------------------------------------------
- Mode = octect
- NOTE: Will only handle octect mode
+ Mode = octet
+ NOTE: Will only handle octet  mode
 */
 
 func (s *Server) wrqHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
@@ -161,9 +161,11 @@ func (s *Server) dataHandler(conn net.PacketConn, p wire.Packet, addr net.Addr, 
 	// Trim NULL characters
 	d := bytes.Trim(pkt.Data, "\x00")
 
-	// The buffer is reused, so leftovers have to be cut out - (d[:n])
+	// The buffer is reused, so leftovers have to be cut out
 	t.Data = append(t.Data, d[:n]...)
 	t.BlockNum++
+
+	// Create response package and send
 	res := wire.PacketAck{BlockNum: pkt.BlockNum}
 	t.Send(&res)
 
@@ -191,32 +193,35 @@ func (s *Server) ackHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 	// Cast packet
 	pkt := p.(*wire.PacketAck)
 
+	// Find the file transfer
 	t, err := s.findTransfer(pkt.BlockNum, addr)
 	if err != nil {
 		return
 	}
 
+	// Move to the next block
 	t.BlockNum++
-	tsize := t.BlockNum * constants.MaxDataSize
-	rsize := pkt.BlockNum * constants.MaxDataSize
+
+	// Find the transfer size and read size
+	tSize := t.BlockNum * constants.MaxDataSize
+	rSize := pkt.BlockNum * constants.MaxDataSize
 
 	var data []byte
-	if len(t.Data) >= int(tsize) {
-		data = t.Data[rsize:tsize]
-	} else if len(t.Data) < int(rsize) {
-
-		// Leaving the transfer in inFlight in case of pending retransmits.
+	if len(t.Data) >= int(tSize) {
+		data = t.Data[rSize:tSize]
+	} else if len(t.Data) < int(rSize) {
+		// Leaving the transfer in activeTransfers in case of pending retransmits.
 		s.logger.Printf(constants.FileTransferCompleteMsg, t.Filename)
 		s.mux.Lock()
 		delete(s.activeTransfers, t.Filename)
 		s.mux.Unlock()
 		return
 	} else {
-		data = t.Data[rsize:]
+		data = t.Data[rSize:]
 	}
 
+	// Create response package and send
 	res := wire.PacketData{BlockNum: t.BlockNum, Data: data}
-
 	t.Send(&res)
 
 	s.mux.Lock()

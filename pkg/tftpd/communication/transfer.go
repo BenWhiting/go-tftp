@@ -23,12 +23,14 @@ type Transfer struct {
 	Retry    bool
 }
 
+// Send and Transmit a serialized transfer
 func (t *Transfer) Send(r wire.Packet) error {
 	t.SendData = r.Serialize()
-	return t.transmit()
+	return t.Transmit()
 }
 
-func (t *Transfer) transmit() error {
+// Transmit the transfer
+func (t *Transfer) Transmit() error {
 	_, err := t.Conn.WriteTo(t.SendData, t.Addr)
 	if nil != err {
 		t.Retry = true

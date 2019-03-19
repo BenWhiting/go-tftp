@@ -25,11 +25,13 @@ type Server struct {
 
 // Config struct for the server
 type Config struct {
-	AllowedMode   string
-	Address       string
-	LogFilePath   string
-	FlushInterval int
-	LogFlag       int
+	AllowedMode     string
+	Address         string
+	LogFilePath     string
+	FlushInterval   int
+	LogFlag         int
+	TransferTimeout int
+	RetryTime       int
 }
 
 // NewTFTPServer creates a new Server instance
@@ -90,7 +92,21 @@ func (s *Server) flush() {
 	t := time.NewTicker(time.Millisecond * time.Duration(s.Config.FlushInterval))
 	for range t.C {
 		s.mux.Lock()
-		//TODO: FINISH FLUSH
+		for _, t := range s.activeTransfers {
+			td := time.Duration(time.Second * time.Duration(s.Config.TransferTimeout))
+			if td < time.Now().Sub(t.LastOp) {
+				// Timed out
+				s.logger.Printf(constants.TransferTimeoutMsg, t.Filename)
+				delete(s.activeTransfers, t.Filename)
+			} else if t.Retry {
+				// retry
+				rd := time.Duration(time.Second * time.Duration(s.Config.RetryTime))
+				if rd < time.Now().Sub(t.LastOp) {
+					s.logger.Printf(constants.RetryLastPktMsg, t.Filename)
+					t.Transmit()
+				}
+			}
+		}
 		s.mux.Unlock()
 	}
 }
