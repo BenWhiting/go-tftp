@@ -89,7 +89,7 @@ func (s *Server) readAndRoute() {
 }
 
 func (s *Server) flush() {
-	t := time.NewTicker(time.Millisecond * time.Duration(s.Config.FlushInterval))
+	t := time.NewTicker(time.Second * time.Duration(s.Config.FlushInterval))
 	for range t.C {
 		s.mux.Lock()
 		for _, t := range s.activeTransfers {

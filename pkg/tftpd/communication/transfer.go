@@ -24,8 +24,8 @@ type Transfer struct {
 }
 
 // Send and Transmit a serialized transfer
-func (t *Transfer) Send(r wire.Packet) error {
-	t.SendData = r.Serialize()
+func (t *Transfer) Send(w wire.Packet) error {
+	t.SendData = w.Serialize()
 	return t.Transmit()
 }
 
