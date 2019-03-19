@@ -56,7 +56,7 @@ func (s *Server) rrqHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 		Addr:     addr,
 		Conn:     conn,
 		Data:     fileData,
-		Filename: addr.String(),
+		Filename: pkt.Filename,
 	}
 
 	// Break down message based on MaxDataSize
