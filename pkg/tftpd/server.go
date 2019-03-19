@@ -3,6 +3,7 @@ package tftpd
 import (
 	"log"
 	"net"
+	"os"
 	"sync"
 	"time"
 
@@ -18,6 +19,7 @@ type Server struct {
 	Config          *Config
 	logger          *log.Logger
 	loggerToFile    *log.Logger
+	logFile         *os.File
 	activeTransfers map[string]*communication.Transfer
 	store           map[string][]byte
 	mux             *sync.RWMutex
@@ -41,7 +43,7 @@ func NewTFTPServer(config *Config) (*Server, error) {
 		return nil, err
 	}
 
-	fl, err := logger.NewRequestLogger(config.LogFilePath, config.LogFlag)
+	f, fl, err := logger.NewRequestLogger(config.LogFilePath, config.LogFlag)
 	if nil != err {
 		return nil, err
 	}
@@ -50,6 +52,7 @@ func NewTFTPServer(config *Config) (*Server, error) {
 		Config:       config,
 		logger:       gl,
 		loggerToFile: fl,
+		logFile:      f,
 		mux:          &sync.RWMutex{},
 	}, nil
 }
@@ -70,6 +73,7 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) serve() {
+	defer s.logFile.Close()
 	// start "pipe" cleaner
 	go s.flush()
 	// blocker call

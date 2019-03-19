@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"errors"
 	"log"
 	"os"
 
@@ -8,10 +9,13 @@ import (
 )
 
 // NewRequestLogger for tftp server
-func NewRequestLogger(filePath string, flag int) (*log.Logger, error) {
+func NewRequestLogger(filePath string, flag int) (*os.File, *log.Logger, error) {
+	if flag > 7 || flag < 1 {
+		return nil, nil, errors.New(constants.UnknownLogFlagMsg)
+	}
 	lf, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if nil != err {
-		return nil, err
+		return nil, nil, err
 	}
-	return log.New(lf, constants.FileRequestMsg, flag), nil
+	return lf, log.New(lf, constants.FileRequestMsg, flag), nil
 }

@@ -5,6 +5,12 @@ This is a simple in-memory TFTP server, implemented in Go.  It is
 RFC1350-compliant, but doesn't implement the additions in later RFCs.  In
 particular, options are not recognized.
 
+
+
+#### Notes
+* [Source RFC](https://tools.ietf.org/html/rfc1350)
+* Only implements 'octet' mode.
+
 Usage
 -----
 ### Build
