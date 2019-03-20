@@ -71,7 +71,7 @@ func NewTFTPServer(config *Config) (*Server, error) {
 	}, nil
 }
 
-// Initialize a Server instance
+// Initialize the udp server
 func (s *Server) Initialize() error {
 	conn, err := net.ListenPacket("udp", s.Config.Address)
 	if nil != err {

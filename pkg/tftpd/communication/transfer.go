@@ -9,8 +9,6 @@ import (
 	"github.com/BenWhiting/go-tftp/pkg/wire"
 )
 
-const maxDataSize = 512
-
 // Transfer struct for active transfer
 type Transfer struct {
 	LastOp   time.Time

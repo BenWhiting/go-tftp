@@ -39,6 +39,7 @@ func TestServer_rrqHandler(t *testing.T) {
 		return
 	}
 	defer cli.Close()
+	defer s.Connection.Close()
 
 	type args struct {
 		conn net.PacketConn
@@ -123,6 +124,7 @@ func TestServer_wrqHandler(t *testing.T) {
 		return
 	}
 	defer cli.Close()
+	defer s.Connection.Close()
 
 	type args struct {
 		conn net.PacketConn

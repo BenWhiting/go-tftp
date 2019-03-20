@@ -38,6 +38,7 @@ func TestServer_sendError(t *testing.T) {
 		return
 	}
 	defer cli.Close()
+	defer s.Connection.Close()
 
 	type args struct {
 		code   uint16

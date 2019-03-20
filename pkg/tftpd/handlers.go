@@ -68,12 +68,12 @@ func (s *Server) rrqHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 	}
 
 	// Create response package
-	res := wire.PacketData{
+	r := wire.PacketData{
 		Data:     data,
 		BlockNum: t.BlockNum}
 
 	// Send
-	t.Send(&res)
+	t.Send(&r)
 
 	// Add file to active transfers
 	s.mux.Lock()
@@ -129,10 +129,10 @@ func (s *Server) wrqHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 	}
 
 	// Create response package
-	res := wire.PacketAck{BlockNum: 0}
+	r := wire.PacketAck{BlockNum: 0}
 
 	// Send
-	t.Send(&res)
+	t.Send(&r)
 
 	// Add file to active transfers
 	s.mux.Lock()
@@ -166,8 +166,8 @@ func (s *Server) dataHandler(conn net.PacketConn, p wire.Packet, addr net.Addr, 
 	t.BlockNum++
 
 	// Create response package and send
-	res := wire.PacketAck{BlockNum: pkt.BlockNum}
-	t.Send(&res)
+	r := wire.PacketAck{BlockNum: pkt.BlockNum}
+	t.Send(&r)
 
 	// If incoming size is less than max data size file is done
 	// else continue
@@ -221,8 +221,8 @@ func (s *Server) ackHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 	}
 
 	// Create response package and send
-	res := wire.PacketData{BlockNum: t.BlockNum, Data: data}
-	t.Send(&res)
+	r := wire.PacketData{BlockNum: t.BlockNum, Data: data}
+	t.Send(&r)
 
 	s.mux.Lock()
 	s.activeTransfers[t.Filename] = t
@@ -245,7 +245,7 @@ func (s *Server) findTransfer(block uint16, addr net.Addr) (t *communication.Tra
 	defer s.mux.Unlock()
 
 	for _, t := range s.activeTransfers {
-		if t.BlockNum == block && addr.String() == t.Addr.String() {
+		if addr.String() == t.Addr.String() && t.BlockNum == block {
 			return t, nil
 		}
 	}
