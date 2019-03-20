@@ -24,6 +24,9 @@ const FailedSendErrMsg string = "Failed to send err to %v %s\n"
 // SimpleErrMsg template
 const SimpleErrMsg string = "Error: %s\n"
 
+// ConfigErrMsg template
+const ConfigErrMsg string = "Config value %s is too low\n"
+
 // ParsingPackErrMsg template
 const ParsingPackErrMsg string = "Error parsing a packet: %s"
 
@@ -64,7 +67,7 @@ const ServerMessageWrapper string = "%s From client - %s"
 const UnknownTransferMsg string = "Unknown transfer"
 
 // FileTransferCompleteMsg template
-const FileTransferCompleteMsg string = "Transfer is complete %s\n"
+const FileTransferCompleteMsg string = "Transfer %q is complete \n"
 
 // FileReceivingCompleteMsg template
 const FileReceivingCompleteMsg string = "Finished receiving %s from %v\n"

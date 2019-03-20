@@ -26,9 +26,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = server.Start()
+	err = server.Initialize()
 	if nil != err {
 		log.Fatal(err)
 	}
 
+	server.Start()
 }

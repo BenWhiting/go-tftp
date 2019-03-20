@@ -28,7 +28,7 @@ func (s *Server) rrqHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 	s.loggerToFile.Printf(constants.ReceivedMsg, pkt.Op, p)
 
 	// Check Mode type
-	if s.Config.AllowedMode == strings.ToLower(pkt.Mode) {
+	if s.Config.AllowedMode != strings.ToLower(pkt.Mode) {
 		msg := fmt.Sprintf(constants.ModeNotSupportedMsg, pkt.Op, pkt.Mode)
 		serverMsg := fmt.Sprintf(constants.ServerMessageWrapper, msg, addr)
 		s.logger.Println(serverMsg)
@@ -98,7 +98,7 @@ func (s *Server) wrqHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 	s.loggerToFile.Printf(constants.ReceivedMsg, pkt.Op, p)
 
 	// Check Mode type
-	if s.Config.AllowedMode == strings.ToLower(pkt.Mode) {
+	if s.Config.AllowedMode != strings.ToLower(pkt.Mode) {
 		msg := fmt.Sprintf(constants.ModeNotSupportedMsg, pkt.Op, pkt.Mode)
 		serverMsg := fmt.Sprintf(constants.ServerMessageWrapper, msg, addr)
 		s.logger.Println(serverMsg)
@@ -111,7 +111,7 @@ func (s *Server) wrqHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 	s.mux.Lock()
 	_, ok := s.store[pkt.Filename]
 	s.mux.Unlock()
-	if !ok {
+	if ok {
 		msg := fmt.Sprintf(constants.WRQFileAlreadyExistsErrMsg, pkt.Filename)
 		serverMsg := fmt.Sprintf(constants.ServerMessageWrapper, msg, addr)
 		s.logger.Println(serverMsg)

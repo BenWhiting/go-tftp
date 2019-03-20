@@ -1,6 +1,7 @@
 package tftpd
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -38,6 +39,17 @@ type Config struct {
 
 // NewTFTPServer creates a new Server instance
 func NewTFTPServer(config *Config) (*Server, error) {
+	// force no values below 0
+	if config.FlushInterval <= 0 {
+		return nil, fmt.Errorf(constants.ConfigErrMsg, "FlushInterval")
+	}
+	if config.RetryTime <= 0 {
+		return nil, fmt.Errorf(constants.ConfigErrMsg, "RetryTime")
+	}
+	if config.TransferTimeout <= 0 {
+		return nil, fmt.Errorf(constants.ConfigErrMsg, "TransferTimeout")
+	}
+
 	gl, err := logger.NewGeneralLogger(config.LogFlag)
 	if nil != err {
 		return nil, err
@@ -49,16 +61,18 @@ func NewTFTPServer(config *Config) (*Server, error) {
 	}
 
 	return &Server{
-		Config:       config,
-		logger:       gl,
-		loggerToFile: fl,
-		logFile:      f,
-		mux:          &sync.RWMutex{},
+		Config:          config,
+		logger:          gl,
+		loggerToFile:    fl,
+		logFile:         f,
+		activeTransfers: map[string]*communication.Transfer{},
+		store:           map[string][]byte{},
+		mux:             &sync.RWMutex{},
 	}, nil
 }
 
-// Start a Server instance
-func (s *Server) Start() error {
+// Initialize a Server instance
+func (s *Server) Initialize() error {
 	conn, err := net.ListenPacket("udp", s.Config.Address)
 	if nil != err {
 		return err
@@ -66,13 +80,12 @@ func (s *Server) Start() error {
 	s.Connection = conn
 
 	s.logger.Printf(constants.ServerStartMsg, conn.LocalAddr())
-
-	defer s.Connection.Close()
-	s.serve()
 	return nil
 }
 
-func (s *Server) serve() {
+// Start the server
+func (s *Server) Start() {
+	defer s.Connection.Close()
 	defer s.logFile.Close()
 	// start "pipe" cleaner
 	go s.flush()

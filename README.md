@@ -24,7 +24,7 @@ Command-Line Flags
 ```
 Usage of go-tftp:
   -f int
-        TFTP server flush period (Seconds). (default 1)
+        TFTP server flush period (Seconds). (default 1)  - Note: must be above 0 or else will not boot
   -h string
         TFTP server address (default "127.0.0.1:69")
   -l int
@@ -32,9 +32,9 @@ Usage of go-tftp:
   -p string
         TFTP server request log file path. (default "./go-tftp.log")
   -r int
-        TFTP server transfer retry time (Seconds). (default 30)
+        TFTP server transfer retry time (Seconds). (default 30)  - Note: must be above 0 or else will not boot
   -t int
-        TFTP server transfer timeout (Seconds). (default 30)
+        TFTP server transfer timeout (Seconds). (default 30)  - Note: must be above 0 or else will not boot
 ```
 
 ### Directory Structure
@@ -57,3 +57,7 @@ Run all unit tests
 ```
 go test ./...
 ```
+
+Notes:
+
+* Partial unit tests implemented will revisit at a later date
