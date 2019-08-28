@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/gojp/goreportcard)](https://github.com/BenWhiting/go-tftp)
+
 In-memory TFTP Server
 =====================
 
