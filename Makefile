@@ -1,6 +1,6 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
-GOTEST=$(GOCMD) test
+GOTEST=$(GOCMD) test -v
 LDFLAGS=-ldflags="-s -w"
 GOBUILDFLAGS=-a $(LDFLAGS)
 BUILDDIR=build
