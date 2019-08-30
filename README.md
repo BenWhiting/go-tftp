@@ -1,5 +1,5 @@
 [![Go Report Card](https://goreportcard.com/badge/gojp/goreportcard)](https://github.com/BenWhiting/go-tftp)
-[![Build Status](https://travis-ci.com/BenWhiting/go-tftp.svg?branch=master)](https://travis-ci.org/BenWhiting/go-tftp)
+[![Build Status](https://travis-ci.org/BenWhiting/go-tftp.svg?branch=master)](https://travis-ci.org/BenWhiting/go-tftp)
 
 In-memory TFTP Server
 =====================
