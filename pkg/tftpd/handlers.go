@@ -203,8 +203,8 @@ func (s *Server) ackHandler(conn net.PacketConn, p wire.Packet, addr net.Addr) {
 	t.BlockNum++
 
 	// Find the transfer size and read size
-	tSize := int(t.BlockNum) * constants.MaxDataSize
-	rSize := int(pkt.BlockNum) * constants.MaxDataSize
+	tSize := t.BlockNum * constants.MaxDataSize
+	rSize := pkt.BlockNum * constants.MaxDataSize
 
 	var data []byte
 	if len(t.Data) >= int(tSize) {
